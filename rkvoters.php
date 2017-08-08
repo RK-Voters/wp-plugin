@@ -30,21 +30,39 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-include("config.php");
-include('rkvoters_model.php');
+echo "I am changing!";
+
+require_once("config.php");
+require_once('rkvoters_model.php');
 
 
 // LOAD THE APP
-function rkvoters_template_main(){
-
-	// Load the data model
+add_action( 'init', 'load_rkvoters' );
+function load_rkvoters() {
 	global $rkvoters_model;
 	$rkvoters_model = new RKVoters_Model();
+}
+
+
+
+// RENDER THE TEMPLATE
+function rkvoters_template_main(){
+
+	phpinfo();
+
+	// Grab the data model
+	global $rkvoters_model;
+	var_dump($rkvoters_model);
+
+
+	echo $rkvoters_model -> current_campaign -> img;
+
+	echo "<br /><br />" . content_url() . "/plugins/rkvoters/images/" . $rkvoters_model -> current_campaign -> slug . ".jpg";
 
 
 	// If you're not logged in, load the login screen
 	if(!$rkvoters_model -> current_user -> isLoggedIn) {
-		include('templates/logged-out.php');
+		include('client/templates/logged-out.php');
 		return;
 	}
 

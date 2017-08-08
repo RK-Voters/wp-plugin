@@ -1,4 +1,9 @@
+I am a change to the config file;
+
+
 <?php
+  exit();
+
   global $rkvoters_config;
 
   // this varies depending on the environment...

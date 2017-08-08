@@ -1,5 +1,7 @@
 <?php
 
+	echo "I'm running";
+
 
 	Class RKVoters_Model {
 
@@ -18,6 +20,11 @@
 			else {
 				$this -> request = $_POST;
 			}
+
+		}
+
+		// load the plugin's assets when you're about to render it
+		function loadPlugin() {
 
 			// load the current campaign
 			$this -> current_campaign = $this -> _get_current_campaign();
@@ -59,7 +66,7 @@
 			$current_campaign -> slug = $slug;
 
 			// get img
-			$current_campaign -> img = plugin_dir_url( __FILE__ ) . "images/" . $slug . ".jpg";
+			$current_campaign -> img = content_url() . "/plugins/rkvoters/images/" . $slug . ".jpg";
 
 			return $current_campaign;
 
