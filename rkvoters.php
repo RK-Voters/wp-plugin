@@ -30,8 +30,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-echo "I am changing!";
-
 require_once("config.php");
 require_once('rkvoters_model.php');
 
@@ -48,17 +46,10 @@ function load_rkvoters() {
 // RENDER THE TEMPLATE
 function rkvoters_template_main(){
 
-	phpinfo();
-
 	// Grab the data model
 	global $rkvoters_model;
-	var_dump($rkvoters_model);
-
-
-	echo $rkvoters_model -> current_campaign -> img;
-
-	echo "<br /><br />" . content_url() . "/plugins/rkvoters/images/" . $rkvoters_model -> current_campaign -> slug . ".jpg";
-
+	$rkvoters_model -> loadPlugin();
+	load_rkvoters_client();
 
 	// If you're not logged in, load the login screen
 	if(!$rkvoters_model -> current_user -> isLoggedIn) {
@@ -67,7 +58,6 @@ function rkvoters_template_main(){
 	}
 
 	// If you are, load the main app interface
-	load_rkvoters_client();
 	include('client/templates/tpl-main.php');
 }
 add_shortcode( 'rkvoters', 'rkvoters_template_main' );

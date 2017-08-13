@@ -11,7 +11,7 @@
 	Loading...
 </div>
 
-<div id="main_content"  style="display: none">
+<div id="main_content"  style="display: none;">
 	<div class="innerFrame" ng-app="RKVApp" ng-controller="RKVCtrl">
 		<div class="interface_controller" style="text-align: left;">
 			<a ng-click="loadComponent('report')" ng-if="component=='knocklist'">&lt; &lt; See Report</a>

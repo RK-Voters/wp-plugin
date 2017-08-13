@@ -255,6 +255,7 @@ function($scope, $http, $sce, $rootScope, $window, $uibModal){
   // API
   $scope.makeApiCall = function(request, callback){
     request.access_token = $scope.rkvoters_config.access_token;
+    request.campaign_slug = $scope.rkvoters_config.campaign_slug;
     $http({
       method: 'POST',
       url: $scope.rkvoters_config.api_url,

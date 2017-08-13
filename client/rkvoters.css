@@ -1,4 +1,6 @@
-body { font-family: "Open Sans",sans-serif; padding: 40px;}
+body          { font-family: "Open Sans",sans-serif;}
+.container    { width: 100%; }
+#main_content { text-align: left; }
 
 /* LOGGED OUT */
 .logged_out_img     { height: 126px; width: 126px; margin: 20px auto;

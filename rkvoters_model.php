@@ -1,8 +1,5 @@
 <?php
 
-	echo "I'm running";
-
-
 	Class RKVoters_Model {
 
 		function __construct(){

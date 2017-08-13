@@ -4,7 +4,7 @@
 ?>
 
 <div class="loggedOut">
-  <h2 style="font-size: 30px">Log In</h2>
+  <h2 style="font-size: 30px; margin-top: 0; text-align: center">Log In</h2>
   <div  class="logged_out_img">
     <img src="<?php echo $rkvoters_model -> current_campaign -> img; ?>" />
   </div>
