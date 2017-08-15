@@ -7,8 +7,9 @@ function($scope, $http, $sce, $rootScope, $window, $uibModal){
 
   // INIT STATE
   var $ = jQuery;
+  appScope = $scope;
+
   $scope.init = function(){
-    $rootScope.appScope = $scope;
     $scope.people = {};
     $scope.rkvoters_data = {};
 
@@ -371,10 +372,10 @@ function($scope, $http, $sce, $rootScope, $window, $uibModal){
       api : 'updatePerson',
       rkid : person.rkid,
       person : person,
-      listRequest: $rootScope.appScope.listRequest
+      listRequest: appScope.listRequest
     }
     $scope.makeApiCall(request, function(response){
-      $rootScope.appScope.load_knocklist(response);
+      $scope.load_knocklist(response);
     });
   }
 
@@ -432,10 +433,13 @@ function($scope, $http, $sce, $rootScope, $window, $uibModal){
 
       $scope.load_person(person);
       $scope.featured_person = person;
-      $uibModal.open({
-        template: $('#modal_template').html(),
+
+      var modalInstance = $uibModal.open({
         controller: 'FeaturePersonCtrl',
+        templateUrl: "modal_template.html"
+        }
       });
+
     });
   }
 
@@ -476,7 +480,6 @@ function($scope, $http, $sce, $rootScope, $window, $uibModal){
 app.controller('ListManagerCtrl',
 ['$scope', '$rootScope', '$uibModal',
   function($scope, $rootScope, $uibModal){
-    var $ = jQuery;
 
     $scope.litbomb = {};
 
@@ -486,13 +489,13 @@ app.controller('ListManagerCtrl',
           api: 'litBomb',
           date: $scope.litbomb.date,
           rkids : [],
-          listRequest: $rootScope.appScope.listRequest
+          listRequest: appScope.listRequest
         }
-        $.each($rootScope.appScope.knocklist.people, function(i, person){
+        $.each(appScope.knocklist.people, function(i, person){
           request.rkids.push(person.rkid);
         });
         $scope.makeApiCall(request, function(revisedList){
-          $rootScope.appScope.load_knocklist(revisedList);
+          appScope.load_knocklist(revisedList);
           $scope.$close();
         });
       }
@@ -502,10 +505,10 @@ app.controller('ListManagerCtrl',
       if(confirm('Are the postcards in the mail?')){
         var request = {
           api: 'send_postcards',
-          listRequest: $rootScope.appScope.listRequest
+          listRequest: appScope.listRequest
         }
         $scope.makeApiCall('', request, function(revisedList){
-          $rootScope.appScope.load_knocklist(revisedList);
+          appScope.load_knocklist(revisedList);
           $scope.$close();
         });
       }
@@ -519,9 +522,8 @@ app.controller('ListManagerCtrl',
 app.controller('PersonAdderCtrl',
 ['$scope', '$rootScope', '$uibModal',
   function($scope, $rootScope, $uibModal){
-    var $ = jQuery;
 
-    var st = $rootScope.appScope.listRequest.street_name;
+    var st = appScope.listRequest.street_name;
     if(st == 'Select Street...') st = '';
 
     $scope.person = {
@@ -536,10 +538,10 @@ app.controller('PersonAdderCtrl',
       var request = {
         api: 'addPerson',
         person: $scope.person,
-        listRequest: $rootScope.appScope.listRequest
+        listRequest: appScope.listRequest
       }
       $scope.makeApiCall('', request, function(revisedList){
-        $rootScope.appScope.load_knocklist(revisedList);
+        appScope.load_knocklist(revisedList);
         $scope.$close();
       });
     }
@@ -550,20 +552,19 @@ app.controller('PersonAdderCtrl',
 );
 
 app.controller('FeaturePersonCtrl',
-['$scope', '$rootScope', '$uibModal',
-  function($scope, $rootScope, $uibModal){
-    var $ = jQuery;
-    $scope.person = $rootScope.appScope.featured_person;
+['$scope', '$uibModal', '$rootScope',
+  function($scope, $uibModal, $rootScope,){
+
+    $scope.person = appScope.featured_person;
     $scope.newContact = {
       type : 'Post Card'
     };
-
 
     $scope.editBasicInfo = function(){
       $scope.$close();
       $rootScope.mode = 'Edit';
       $uibModal.open({
-        template: $('#modal_personAdder').html(),
+        template: "modal_personAdder.html",
         controller: 'FeaturePersonCtrl'
       });
     }
@@ -571,7 +572,7 @@ app.controller('FeaturePersonCtrl',
     $scope.goBack = function(){
       $scope.$close();
       $uibModal.open({
-        template: $('#modal_template').html(),
+        template: "modal_template.html",
         controller: 'FeaturePersonCtrl',
       });
     }
@@ -583,11 +584,11 @@ app.controller('FeaturePersonCtrl',
         api : 'updatePerson',
         rkid : $scope.person.rkid,
         person : $scope.person,
-        listRequest: $rootScope.appScope.listRequest
+        listRequest: appScope.listRequest
       }
-      $rootScope.appScope.makeApiCall(request, function(person){
+      appScope.makeApiCall(request, function(person){
         $scope.person = person;
-        $rootScope.appScope.load_person(person);
+        appScope.load_person(person);
         if(mode == 1) $scope.$close();
         if(mode == 2) $scope.openNext();
       });
@@ -605,9 +606,9 @@ app.controller('FeaturePersonCtrl',
         contact : $scope.newContact,
         person : $scope.person
       }
-      $rootScope.appScope.makeApiCall(request, function(person){
+      appScope.makeApiCall(request, function(person){
         $scope.newContact = { };
-        $scope.person = $rootScope.appScope.load_person(person);
+        $scope.person = appScope.load_person(person);
 
         if(progress) $scope.openNext();
       });
@@ -617,28 +618,28 @@ app.controller('FeaturePersonCtrl',
     $scope.openNext = function(){
       $scope.$close();
 
-      var i = $rootScope.appScope.selected_index;
+      var i = appScope.selected_index;
       i++;
-      if(i == $rootScope.appScope.knocklist.people.length){
+      if(i == appScope.knocklist.people.length){
         i = 0;
       }
-      $rootScope.appScope.selected_index = i;
-      var p = $rootScope.appScope.knocklist.people[i];
-      $rootScope.appScope.openPerson(p);
+      appScope.selected_index = i;
+      var p = appScope.knocklist.people[i];
+      appScope.openPerson(p);
     }
 
     // open prev person
     $scope.openPrev = function(){
       $scope.$close();
 
-      var i = $rootScope.appScope.selected_index;
+      var i = appScope.selected_index;
       i--;
       if(i == -1){
-        i = $rootScope.appScope.knocklist.people.length - 1;
+        i = appScope.knocklist.people.length - 1;
       }
-      $rootScope.appScope.selected_index = i;
-      var p = $rootScope.appScope.knocklist.people[i];
-      $rootScope.appScope.openPerson(p);
+      appScope.selected_index = i;
+      var p = appScope.knocklist.people[i];
+      appScope.openPerson(p);
     }
 
     // remove
@@ -647,11 +648,11 @@ app.controller('FeaturePersonCtrl',
         var request = {
           api : 'removePerson',
           rkid : $scope.person.rkid,
-          listRequest: $rootScope.appScope.listRequest
+          listRequest: appScope.listRequest
         }
-        $rootScope.appScope.makeApiCall(request, function(response){
+        appScope.makeApiCall(request, function(response){
           if(response.status == 'deleted'){
-            $rootScope.appScope.load_knocklist(response.knocklist);
+            appScope.load_knocklist(response.knocklist);
             $scope.$close();
           }
         });
@@ -665,10 +666,10 @@ app.controller('FeaturePersonCtrl',
         vc_id : contact.vc_id,
         rkid: contact.rkid
       }
-      $rootScope.appScope.makeApiCall(request, function(person){
+      appScope.makeApiCall(request, function(person){
         $scope.newContact = {};
         $scope.person = person;
-        $rootScope.appScope.load_person(person);
+        appScope.load_person(person);
       });
     }
   }

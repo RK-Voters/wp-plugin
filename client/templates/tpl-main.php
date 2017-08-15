@@ -11,8 +11,8 @@
 	Loading...
 </div>
 
-<div id="main_content"  style="display: none;">
-	<div class="innerFrame" ng-app="RKVApp" ng-controller="RKVCtrl">
+<div id="main_content"  style="display: none;"  ng-app="RKVApp" ng-controller="RKVCtrl">
+	<div class="innerFrame">
 		<div class="interface_controller" style="text-align: left;">
 			<a ng-click="loadComponent('report')" ng-if="component=='knocklist'">&lt; &lt; See Report</a>
 			<a ng-click="loadComponent('knocklist')"  ng-if="component=='report'">
@@ -68,7 +68,7 @@
 				<button ng-click="openPersonAdder()">ADD PERSON</button>
 				<button ng-click="toggleMap()">MAP</button>
 
-				<div style="float: right; padding-top: 4px">
+				<div style="padding-top: 15px; text-align: right">
 					<a ng-click="openListManager()">{{contactList.length_label}}</a>
 				</div>
 			</div>
@@ -390,287 +390,293 @@
 
 	</div>
 
+	<!-- MODAL TEMPLATES -->
+	<div style="display: none;">
 
-	<div id="modal_template" style="display: none;">
-		<div class="modalFrame clearfix">
-			<div class="col-md-6">
-				<b>{{person.firstname}} {{person.lastname}}</b>
-				- <a ng-click="editBasicInfo()">EDIT</a>
-				<br />- {{person.address}}, {{person.city}} {{person.state}} {{person.zip}}
-				<br />- {{person.age}} - {{person.enroll}}
-				<span ng-if="person.votedin2011 == 1"> - 2011</span>
-				<span ng-if="person.votedin2013 == 1"> - 2013</span>
-			</div>
-			<div class="col-md-6" style="text-align: right;">
-				<div style="padding: 0 5px 10px;">
-					<a ng-click="openPrev()">&lt;&lt;</a>
-					&nbsp;&nbsp;&nbsp;
-					<a ng-click="openNext()">&gt;&gt;</a>
+		<!-- PERSON MODAL (PRIMARY) -->
+		<script type="text/ng-template" id="modal_template.html">
+			<div class="modalFrame clearfix">
+				<div class="col-md-6">
+					<b>{{person.firstname}} {{person.lastname}}</b>
+					- <a ng-click="editBasicInfo()">EDIT</a>
+					<br />- {{person.address}}, {{person.city}} {{person.state}} {{person.zip}}
+					<br />- {{person.age}} - {{person.enroll}}
+					<span ng-if="person.votedin2011 == 1"> - 2011</span>
+					<span ng-if="person.votedin2013 == 1"> - 2013</span>
 				</div>
-				<div style="clear: both;">
-					<button ng-click="removePerson()" style="float: right">Remove from List</button>
+				<div class="col-md-6" style="text-align: right;">
+					<div style="padding: 0 5px 10px;">
+						<a ng-click="openPrev()">&lt;&lt;</a>
+						&nbsp;&nbsp;&nbsp;
+						<a ng-click="openNext()">&gt;&gt;</a>
+					</div>
+					<div style="clear: both;">
+						<button ng-click="removePerson()" style="float: right">Remove from List</button>
+					</div>
+				</div>
+				<div class="topSection clearfix" style="clear:both;">
+					<div class="col-md-4  field">
+						<b>Support Level:</b>
+						<br />
+						<select ng-model="person.support_level">
+							<option value="0">0 - Unidentified</option>
+							<option value="1">1 - With Us</option>
+							<option value="2">2 - Undecided</option>
+							<option value="3">3 - Against Us</option>
+							<option value="4">4 - Pending Absentee</option>
+							<option value="5">5 - Voted Absentee</option>
+						</select>
+					</div>
+					<div class="col-md-4  field">
+						<b>Email:</b>
+						<br />
+						<input placeholder="Email" ng-model="person.email" />
+					</div>
+					<div class="col-md-4  field">
+						<b>Phone
+							<span ng-if="person.phoneType != ''">({{person.phoneType}})</span>
+							<a ng-if="person.phone != ''" href="tel:{{person.phone}}">call</a>
+							:
+						</b>
+						<br />
+						<input placeholder="Phone" ng-model="person.phone" />
+					</div>
+					<div class="col-md-12 field">
+						<b>Bio:</b>
+						<br />
+						<textarea ng-model="person.bio" style="height: 60px;"></textarea>
+					</div>
+					<div class="col-md-6">
+						<label>
+							<input id="volunteer_check" ng-model="person.volunteer" type="checkbox" style="width: 20px"
+									 ng-true-value="'true'" ng-false-value="''"/>&nbsp;
+							Volunteer
+						</label>
+						<br /><br />
+						<button ng-click="savePerson(1)">Save & Close</button>
+						<button ng-click="savePerson(2)">Save & Next</button>
+					</div>
+					<div class="col-md-6" ng-if="person.neighbors">
+						<br />
+						<b>Folks at the same number \ address:</b>
+						<ul>
+							<li ng-repeat="neighbor in person.neighbors">
+								{{neighbor.support_level}} - {{neighbor.residentLabel}} -  - <i>{{neighbor.bio}}</i>
+							</li>
+						</ul>
+					</div>
+
+
+
+				</div>
+				<div class="bottomSection">
+					<div class="col-md-6">
+						<div>
+							<select ng-model="person.closed">
+								<option value="0">Person is Open</option>
+								<option value="1">Person is Closed</option>
+							</select>
+							<br /><br />
+						</div>
+
+						<h2>Add Contact</h2>
+						<b>Type:</b>
+						<select ng-model="$root.contactType">
+							<option>Chat at Door</option>
+							<option>Chat on Street</option>
+							<option>Chat Elsewhere</option>
+							<option>Donation</option>
+							<option>Email</option>
+							<option>Lit Drop</option>
+							<option>Phone Call</option>
+							<option>Post Card</option>
+							<option>Sent Post Card</option>
+							<option>Update</option>
+						</select>
+
+						<br /><br />
+
+						<b>Date:</b>
+						<br />
+
+						<input
+						type="text" class="form-control"
+						is-open="focus" ng-focus="focus=true"
+						uib-datepicker-popup="shortDate"
+						ng-model="newContact.datetime"
+						close-text="Close"
+						placeholder="Enter date..." />
+
+						<div ng-if="$root.contactType == 'Donation'">
+							<br />
+							<b>Amount:</b>
+							<br /><input type="number" ng-model="newContact.amount" />
+						</div>
+
+						<br />
+						<b>Note:</b>
+						<select ng-if="$root.contactType == 'Phone Call'" ng-model="$root.callStatus"
+								style="margin: 0 0 10px">
+							<option>Connection</option>
+							<option>VM - Person Confirmed - Message</option>
+							<option>VM - Not Confirmed - Message</option>
+							<option>VM - Person Confirmed - No Message</option>
+							<option>VM - Not Confirmed - No Message</option>
+							<option>Just Ringing</option>
+							<option>Bad Number</option>
+						</select>
+						<br />
+						<textarea ng-model="newContact.note"></textarea>
+
+						<br /><br />
+						<button ng-click="recordContact()">Post</button>
+						&nbsp;&nbsp; <button ng-click="recordContact(1)">Post & Next</button>
+
+					</div>
+
+
+					<div class="col-md-6" style="border-left: dashed 1px #ccc;">
+						<h2>Log</h2>
+						<div ng-repeat="contact in person.contacts">
+							<i>{{contact.datetime.split(' ')[0]}}</i> -
+							<a ng-click="deleteContact(contact)">X</a>
+							<br /><b>{{contact.type}}</b>
+							<span ng-if="contact.status != ''">
+								 - {{contact.status}}
+							</span>
+							<span ng-if="contact.note != ''">
+								 - {{contact.note}}
+							</span>
+							<span ng-if="contact.amount != 0">
+								${{contact.amount}}
+							</span>
+							<span ng-if="contact.agent != 0">
+								<i>- {{contact.username}}</i>
+							</span>
+							<br /><br />
+						</div>
+					</div>
+
 				</div>
 			</div>
-			<div class="topSection clearfix" style="clear:both;">
-				<div class="col-md-4  field">
-					<b>Support Level:</b>
+		</script>
+
+		<!-- LIST MANAGER MODAL -->
+		<script type="text/ng-template" id="modal_listManager">
+			<div class="modalFrame clearfix">
+
+				<div class="col-md-6">
+					<b>View Mode?</b>
 					<br />
+					<select ng-model="$root.viewMode">
+						<option>addresses</option>
+						<option>individuals</option>
+						<option>knocknotes</option>
+						<option>mark absentees</option>
+						<option>multi-sheet</option>
+					</select>
+				</div>
+
+
+
+				<div class="col-md-6">
+					<b>Drop a Lit Bomb on this street?</b>
+					<br />
+					<input
+						type="text" class="form-control"
+						datepicker-popup="shortDate"
+						ng-model="litbomb.date"
+						close-text="Close"
+						placeholder="Enter date..." />
+					<br />
+					<button ng-click="dropBomb()">DROP!</button>
+
+					<br /><br /><br />
+					<b>Send Post Cards:</b>
+					<br /><button ng-click="sendPostcards()">SEND!</button>
+				</div>
+
+			</div>
+		</script>
+
+		<!-- PERSON EDITOR MODAL -->
+		<script type="text/ng-template" id="modal_personAdder">
+			<div class="modalFrame clearfix">
+				<h2>{{$root.mode}} Person
+					<span ng-if="$root.mode == 'Edit'">- <a ng-click="goBack()">Back</a></span>:</h2>
+
+				<div class="col-md-6">
+					<label>First Name</label>
+					<input ng-model="person.firstname" />
+				</div>
+				<div class="col-md-6">
+					<label>Last Name</label>
+					<input ng-model="person.lastname" />
+				</div>
+				<div class="col-md-12">
+					<label>Bio</label>
+					<textarea ng-model="person.bio"></textarea>
+				</div>
+
+				<div class="col-md-6">
+					<label>Street Number</label>
+					<input ng-model="person.stnum" />
+					<br />
+					<label>Street Name</label>
+					<input ng-model="person.stname" />
+					<br />
+					<label>Unit</label>
+					<input ng-model="person.unit" />
+					<br />
+					<label>City</label>
+					<input ng-model="person.city" />
+					<br />
+					<label>State</label>
+					<input ng-model="person.state" />
+					<br />
+					<label>Zip</label>
+					<input ng-model="person.zip" />
+				</div>
+				<div class="col-md-6">
+					<label>Support Level</label>
 					<select ng-model="person.support_level">
 						<option value="0">0 - Unidentified</option>
 						<option value="1">1 - With Us</option>
 						<option value="2">2 - Undecided</option>
 						<option value="3">3 - Against Us</option>
-						<option value="4">4 - Pending Absentee</option>
-						<option value="5">5 - Voted Absentee</option>
-					</select>
-				</div>
-				<div class="col-md-4  field">
-					<b>Email:</b>
-					<br />
-					<input placeholder="Email" ng-model="person.email" />
-				</div>
-				<div class="col-md-4  field">
-					<b>Phone
-						<span ng-if="person.phoneType != ''">({{person.phoneType}})</span>
-						<a ng-if="person.phone != ''" href="tel:{{person.phone}}">call</a>
-						:
-					</b>
-					<br />
-					<input placeholder="Phone" ng-model="person.phone" />
-				</div>
-				<div class="col-md-12 field">
-					<b>Bio:</b>
-					<br />
-					<textarea ng-model="person.bio" style="height: 60px;"></textarea>
-				</div>
-				<div class="col-md-6">
-					<label>
-						<input id="volunteer_check" ng-model="person.volunteer" type="checkbox" style="width: 20px"
-								 ng-true-value="'true'" ng-false-value="''"/>&nbsp;
-						Volunteer
-					</label>
-					<br /><br />
-					<button ng-click="savePerson(1)">Save & Close</button>
-					<button ng-click="savePerson(2)">Save & Next</button>
-				</div>
-				<div class="col-md-6" ng-if="person.neighbors">
-					<br />
-					<b>Folks at the same number \ address:</b>
-					<ul>
-						<li ng-repeat="neighbor in person.neighbors">
-							{{neighbor.support_level}} - {{neighbor.residentLabel}} -  - <i>{{neighbor.bio}}</i>
-						</li>
-					</ul>
-				</div>
-
-
-
-			</div>
-			<div class="bottomSection">
-				<div class="col-md-6">
-					<div>
-						<select ng-model="person.closed">
-							<option value="0">Person is Open</option>
-							<option value="1">Person is Closed</option>
-						</select>
-						<br /><br />
-					</div>
-
-					<h2>Add Contact</h2>
-					<b>Type:</b>
-					<select ng-model="$root.contactType">
-						<option>Chat at Door</option>
-						<option>Chat on Street</option>
-						<option>Chat Elsewhere</option>
-						<option>Donation</option>
-						<option>Email</option>
-						<option>Lit Drop</option>
-						<option>Phone Call</option>
-						<option>Post Card</option>
-						<option>Sent Post Card</option>
-						<option>Update</option>
-					</select>
-
-					<br /><br />
-
-					<b>Date:</b>
-					<br />
-
-					<input
-					type="text" class="form-control"
-					is-open="focus" ng-focus="focus=true"
-					uib-datepicker-popup="shortDate"
-					ng-model="newContact.datetime"
-					close-text="Close"
-					placeholder="Enter date..." />
-
-					<div ng-if="$root.contactType == 'Donation'">
-						<br />
-						<b>Amount:</b>
-						<br /><input type="number" ng-model="newContact.amount" />
-					</div>
-
-					<br />
-					<b>Note:</b>
-					<select ng-if="$root.contactType == 'Phone Call'" ng-model="$root.callStatus"
-							style="margin: 0 0 10px">
-						<option>Connection</option>
-						<option>VM - Person Confirmed - Message</option>
-						<option>VM - Not Confirmed - Message</option>
-						<option>VM - Person Confirmed - No Message</option>
-						<option>VM - Not Confirmed - No Message</option>
-						<option>Just Ringing</option>
-						<option>Bad Number</option>
 					</select>
 					<br />
-					<textarea ng-model="newContact.note"></textarea>
+					<label>Party</label>
+					<select ng-model="person.enroll">
+						<option value="U">Un-enrolled \ Unknown</option>
+						<option value="G">Green</option>
+						<option value="D">Democrat</option>
+						<option value="R">Republican</option>
+					</select>
+					<br />
+					<label>Year of Birth</label>
+					<input ng-model="person.yob" />
+					<br />
+					<label>Email</label>
+					<input ng-model="person.email" />
+					<br />
+					<label>Phone</label>
+					<input ng-model="person.phone" />
+					<br />
+					<label>Profession</label>
+					<input ng-model="person.profession" />
+					<br />
+					<label>Employer</label>
+					<input ng-model="person.employer" />
 
 					<br /><br />
-					<button ng-click="recordContact()">Post</button>
-					&nbsp;&nbsp; <button ng-click="recordContact(1)">Post & Next</button>
-
+					<button ng-click="savePerson()" class="btn btn-primary">SAVE!</button>
+					<button ng-click="savePerson(1)" class="btn btn-primary">SAVE AND CLOSE!</button>
 				</div>
-
-
-				<div class="col-md-6" style="border-left: dashed 1px #ccc;">
-					<h2>Log</h2>
-					<div ng-repeat="contact in person.contacts">
-						<i>{{contact.datetime.split(' ')[0]}}</i> -
-						<a ng-click="deleteContact(contact)">X</a>
-						<br /><b>{{contact.type}}</b>
-						<span ng-if="contact.status != ''">
-							 - {{contact.status}}
-						</span>
-						<span ng-if="contact.note != ''">
-							 - {{contact.note}}
-						</span>
-						<span ng-if="contact.amount != 0">
-							${{contact.amount}}
-						</span>
-						<span ng-if="contact.agent != 0">
-							<i>- {{contact.username}}</i>
-						</span>
-						<br /><br />
-					</div>
-				</div>
-
 			</div>
-		</div>
+		</script>
+
 	</div>
 
-	<div id="modal_listManager" style="display: none;">
-		<div class="modalFrame clearfix">
 
-			<div class="col-md-6">
-				<b>View Mode?</b>
-				<br />
-				<select ng-model="$root.viewMode">
-					<option>addresses</option>
-					<option>individuals</option>
-					<option>knocknotes</option>
-					<option>mark absentees</option>
-					<option>multi-sheet</option>
-				</select>
-			</div>
-
-
-
-			<div class="col-md-6">
-				<b>Drop a Lit Bomb on this street?</b>
-				<br />
-				<input
-					type="text" class="form-control"
-					datepicker-popup="shortDate"
-					ng-model="litbomb.date"
-					close-text="Close"
-					placeholder="Enter date..." />
-				<br />
-				<button ng-click="dropBomb()">DROP!</button>
-
-				<br /><br /><br />
-				<b>Send Post Cards:</b>
-				<br /><button ng-click="sendPostcards()">SEND!</button>
-			</div>
-
-		</div>
-	</div>
-
-	<div id="modal_personAdder" style="display: none;">
-		<div class="modalFrame clearfix">
-			<h2>{{$root.mode}} Person
-				<span ng-if="$root.mode == 'Edit'">- <a ng-click="goBack()">Back</a></span>:</h2>
-
-			<div class="col-md-6">
-				<label>First Name</label>
-				<input ng-model="person.firstname" />
-			</div>
-			<div class="col-md-6">
-				<label>Last Name</label>
-				<input ng-model="person.lastname" />
-			</div>
-			<div class="col-md-12">
-				<label>Bio</label>
-				<textarea ng-model="person.bio"></textarea>
-			</div>
-
-			<div class="col-md-6">
-				<label>Street Number</label>
-				<input ng-model="person.stnum" />
-				<br />
-				<label>Street Name</label>
-				<input ng-model="person.stname" />
-				<br />
-				<label>Unit</label>
-				<input ng-model="person.unit" />
-				<br />
-				<label>City</label>
-				<input ng-model="person.city" />
-				<br />
-				<label>State</label>
-				<input ng-model="person.state" />
-				<br />
-				<label>Zip</label>
-				<input ng-model="person.zip" />
-			</div>
-			<div class="col-md-6">
-				<label>Support Level</label>
-				<select ng-model="person.support_level">
-					<option value="0">0 - Unidentified</option>
-					<option value="1">1 - With Us</option>
-					<option value="2">2 - Undecided</option>
-					<option value="3">3 - Against Us</option>
-				</select>
-				<br />
-				<label>Party</label>
-				<select ng-model="person.enroll">
-					<option value="U">Un-enrolled \ Unknown</option>
-					<option value="G">Green</option>
-					<option value="D">Democrat</option>
-					<option value="R">Republican</option>
-				</select>
-				<br />
-				<label>Year of Birth</label>
-				<input ng-model="person.yob" />
-				<br />
-				<label>Email</label>
-				<input ng-model="person.email" />
-				<br />
-				<label>Phone</label>
-				<input ng-model="person.phone" />
-				<br />
-				<label>Profession</label>
-				<input ng-model="person.profession" />
-				<br />
-				<label>Employer</label>
-				<input ng-model="person.employer" />
-
-				<br /><br />
-				<button ng-click="savePerson()" class="btn btn-primary">SAVE!</button>
-				<button ng-click="savePerson(1)" class="btn btn-primary">SAVE AND CLOSE!</button>
-			</div>
-
-
-
-		</div>
-	</div>
 </div>
