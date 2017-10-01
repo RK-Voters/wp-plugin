@@ -220,7 +220,7 @@ function($scope, $http, $sce, $rootScope, $window, $uibModal){
 
     person.residentLabel = person.residentLabel.toUpperCase();
 
-    if(person.votedin2011 == 1) {
+    if(person.General2015 == 1) {
 
       person.residentLabel += '*';
     }
@@ -437,7 +437,6 @@ function($scope, $http, $sce, $rootScope, $window, $uibModal){
       var modalInstance = $uibModal.open({
         controller: 'FeaturePersonCtrl',
         templateUrl: "modal_template.html"
-        }
       });
 
     });
